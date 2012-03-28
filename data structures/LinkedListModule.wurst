@@ -1,15 +1,3 @@
-/*
-
-iterate over all elements with:
-
-	C c = getFirsT()
-	while c != null
-		// do something with c
-		c = c.getNext()
-
-
-*/
-
 package LinkedListModule
 
 	public module LinkedListModule
