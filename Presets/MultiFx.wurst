@@ -1,27 +1,35 @@
-package Fx
+package MultiFx
 import DummyRecycler
 import Effect
 import Colors
 import Vectors
 import Angle
-
+import LinkedList
+import TypeCasting
 /********************************************************
- * * * * * * * * * * Fx * * * * * * * * * * * * * * * * *
- * An Fx-Object is basically just a moveable effect.  	*
- * Up above you find the Fx-Class. By creating			*
+ * * * * * * * * * * MultiFx * * * * * * * * * * * * * * * * *
+ * An MultiFx-Object is basically just a moveable effect.  	*
+ * Up above you find the MultiFx-Class. By creating			*
  * an instace of it, you recieve the mentioned,			*
  * moveable effect.										*
  * Constructors and functions defined as following,		*
  * should be self-explanatory.							*
- * Also features automatic recycling of Fx-instances	*
+ * Also features automatic recycling of MultiFx-instances	*
  *														*
  * Credits to Vexorian, Anitarf							*
  ********************************************************/
-public class Fx
+//class Effect
+//	effect e
+//	construct(effect e)
+//		this.e = e
+//	ondestroy
+//		e.destr()
+		
+public class MultiFx
 	private unit 	dummy	= null
-	private effect 	fx 		= null
+	private LinkedList<effect> fxs = new LinkedList<effect>()
 	private real 	zAngle  = 0.
-	private string 	sfxPath 
+	private string 	sMultiFxPath 
 	
 	private colorA col
 	
@@ -31,39 +39,29 @@ public class Fx
 	construct(vec2 pos, angle facing)
 		dummy = newDummy( pos, facing)
 	
-	construct(vec2 pos, angle facing, string fxpath)
-		dummy = newDummy( pos, facing)
-		setFx( fxpath )
-	
 	construct(vec3 pos, angle facing)
 		dummy = newDummy( pos, facing)
 		setZ(pos.z)	
-	
-	construct(vec3 pos, angle facing, string fxpath)
-		dummy = newDummy( pos, facing)
-		setZ(pos.z)
-		setFx( fxpath )	
-	
-	construct(real x, real y, angle facing, string fxpath)
-		dummy = newDummy( vec2(x,y), facing)
-		setFx( fxpath )
+
+	function addFx(string fxPath)
+		fxs.add(dummy.addEffect(fxPath, "origin"))
 			
-	/** Get the owner of this Fx Object */
+	/** Get the owner of this MultiFx Object */
 	function getOwner() returns player
 		return dummy.getOwner()
 		
-	/** Set the owner of this Fx Object */
-	function setOwner(player p, boolean changeColor) returns Fx
+	/** Set the owner of this MultiFx Object */
+	function setOwner(player p, boolean changeColor) returns MultiFx
 		dummy.setOwner(p, changeColor)
 		return this
 		
-	/** Set the teamcolor of this Fx Object */
-	function setTeamcolor(playercolor c) returns Fx
+	/** Set the teamcolor of this MultiFx Object */
+	function setTeamcolor(playercolor c) returns MultiFx
 		SetUnitColor(dummy, c)
 		return this
 	
-	/** Set the scale of this Fx Object */
-	function setScale(real value) returns Fx
+	/** Set the scale of this MultiFx Object */
+	function setScale(real value) returns MultiFx
 		dummy.setScale(value)
 		return this
 
@@ -83,10 +81,10 @@ public class Fx
 	function getAlpha() returns int
 		return col.alpha
 		
-	/** Recolor the Fx object with the given color tuple (colorA) 
+	/** Recolor the MultiFx object with the given color tuple (colorA) 
 	Color: 0 = no color - 255 = full color
 	Alpha: 0 = transparent - 255 = visible */
-	function recolor(colorA newColor) returns Fx
+	function recolor(colorA newColor) returns MultiFx
 		col.red = newColor.red
 		col.green = newColor.green
 		col.blue = newColor.blue
@@ -94,27 +92,14 @@ public class Fx
 		dummy.setVertexColor(newColor)
 		return this
 
-	/** "flashs" the given effect.
-	Flashing plays the death animation of the effect at the fx' position. */
-	function flash(string fx) returns Fx
-		dummy.addEffect(fx, "origin").destr()
-		return this
 		
 	/** Get the xy angle in radians */
 	function getXYAngle() returns angle
 		return dummy.getFacing().asAngleDegrees()
  
 	/** Set the angle in degrees */
-	function setXYAngle(angle value) returns Fx
+	function setXYAngle(angle value) returns MultiFx
 		dummy.setFacing(value)
-		return this
-		
-	/** Creates a new dummy with the given facing in order to achieve instant turning. */
-	function setXYAngleInstant(angle value) returns Fx
-		fx.destr()
-		recycleDummy(dummy)
-		dummy = newDummy( vec2(getX(), getY()), value)
-		setFx(sfxPath)
 		return this
 		
 	/** Get the z angle in radians */
@@ -122,7 +107,7 @@ public class Fx
 		return zAngle
 		
 	/** Set the z angle in radians */
-	function setZAngle(real value) returns Fx
+	function setZAngle(real value) returns MultiFx
 		int i = R2I(value*bj_RADTODEG + 90.5)
 		zAngle = value
 		if i >= 180
@@ -133,7 +118,7 @@ public class Fx
 		return this
 		
 	/** Set the z angle with an angle tuple */
-	function setZAngle(angle value) returns Fx
+	function setZAngle(angle value) returns MultiFx
 		setZAngle(value.radians())
 		return this
 		
@@ -154,62 +139,53 @@ public class Fx
 		return vec2(getX(), getY())
 	
 	/** Set the x coordinate */
-	function setX(real x) returns Fx
+	function setX(real x) returns MultiFx
 		dummy.setX(x)
 		return this
 		
 	/** Set the y coordinate */
-	function setY(real y) returns Fx
+	function setY(real y) returns MultiFx
 		dummy.setY(y)
 		return this
 		
 	/** Set the position to the given xy coordinates */
-	function setPos(real x, real y) returns Fx
+	function setPos(real x, real y) returns MultiFx
 		dummy.setPos(x, y)
 		return this
 	
 	/** Set the position to the given xyz coordinates
 	z = flyHeight */
-	function setPos(real x, real y, real z) returns Fx
+	function setPos(real x, real y, real z) returns MultiFx
 		dummy.setPos(x, y)
 		dummy.setFlyHeight(z, 0.)
 		return this
 		
 	/** Set the position to the given xy vector tuple */
-	function setPos(vec2 pos) returns Fx
+	function setPos(vec2 pos) returns MultiFx
 		dummy.setPos(pos.x, pos.y)
 		return this
 	
 	/** Set the position to the given xyz vector tuple */
-	function setPos(vec3 pos) returns Fx
+	function setPos(vec3 pos) returns MultiFx
 		dummy.setPos(pos.x, pos.y)
 		setZ(pos.z)
 		return this
 		
 	/** Set the z coordinate (flyHeight) */
-	function setZ(real z) returns Fx
+	function setZ(real z) returns MultiFx
 		dummy.setFlyHeight(z, 0.)
 		return this
 			
-	/** Set the path to the sfx model that should be displayed. 
-	If there is already a model displayed, it will be replaced with the new one.*/
-	function setFx(string newpath) returns Fx
-		if fx != null
-			fx.destr()
-		if newpath == ""
-			fx = null
-		else
-			fx = dummy.addEffect(newpath, "origin")
-		sfxPath = newpath
-		return this
 				
 	ondestroy  			
-		if fx != null
+		for effect fx in fxs
 			fx.destr()
+			
+		destroy fxs
 
 		recycleDummy(dummy)
 
-	/** Destroys the Fx object without showing the effect's death animation 
+	/** Destroys the MultiFx object without showing the effect's death animation 
 		Sort of a workaround by setting the position to the top right corner, hopefully not visible.*/
 	function hiddenDestroy()
 		dummy.setPos( 2147483647, 2147483647)
