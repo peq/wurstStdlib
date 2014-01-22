@@ -2,6 +2,7 @@ package TimerUtils
 import NoWurst
 import Table
 import PrintingHelper
+import MagicFunctions
 
 //	Credits: 
 //		* Vexorian (original TimerUtils + TimedLoop)
@@ -23,12 +24,11 @@ public function getTimer() returns timer
 		freeTimers[freeTimersCount].setData(0)
 		return freeTimers[freeTimersCount]
 	else
-		return CreateTimer().setData(0)
+		return CreateTimer()..setData(0)
 		
 /** Attach Data to this timer */
-public function timer.setData(integer data) returns timer
+public function timer.setData(integer data)
 	timerData.saveInt( GetHandleId(this), data )
-	return this
 	
 /** Retrieve the data attached to this timer */
 public function timer.getData() returns integer
@@ -37,10 +37,10 @@ public function timer.getData() returns integer
 /** Release the timer. Use this instead of "DestroyTimer" ! */
 public function timer.release()
 	if this == null
-		printError("Trying to release a null timer")
+		error("Trying to release a null timer")
 		return
 	if this.getData() == HELD
-		printError("ReleaseTimer: Double free!")
+		error("ReleaseTimer: Double free!")
 		return
 	this.setData(HELD)
 	this.pause()
@@ -56,13 +56,11 @@ public function timer.resume()
 public function timer.getElapsed() returns real
 	return TimerGetElapsed(this)
 
-public function timer.start(real time, code timerCallBack) returns timer
+public function timer.start(real time, code timerCallBack)
 	TimerStart(this, time, false, timerCallBack)
-	return this
 	
-public function timer.startPeriodic(real time, code timerCallBack) returns timer
+public function timer.startPeriodic(real time, code timerCallBack)
 	TimerStart(this, time, true, timerCallBack)
-	return this
 
 // module to execute a function after a certain time
 public module Timed
