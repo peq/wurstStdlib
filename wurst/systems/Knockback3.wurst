@@ -1,3 +1,11 @@
+/** By default, this package allows units to collide with destructables and
+    destroy them. To disable this feature, make the global
+    destroyDestructableSpeedThreshold a very high value:
+
+       Knockback3.destroyDestructableSpeedThreshold = 999999999.
+
+    This value defaults to 300.
+*/
 package Knockback3
 
 import Terrain
