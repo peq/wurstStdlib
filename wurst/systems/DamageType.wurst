@@ -158,8 +158,6 @@ init
     onEnter(() -> begin
         GetTriggerUnit()..addAbility(          DAMAGE_TYPE_CHECK_ID)
                         ..makeAbilityPermanent(DAMAGE_TYPE_CHECK_ID, true)
-
-        return false
     end)
     forUnitsInRect(bj_mapInitialPlayableArea, (unit iter) -> begin
         iter..addAbility(          DAMAGE_TYPE_CHECK_ID)
