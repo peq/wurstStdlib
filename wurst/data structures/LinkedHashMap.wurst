@@ -8,8 +8,8 @@ public class LinkedHashMap<K, V> extends HashMap<K, V>
     private LHMEntry<K, V> dummy
 
     construct()
-        keys      = new LinkedList<K>()
-        dummy     = new LHMEntry<K, V>(null, null)
+        keys  = new LinkedList<K>()
+        dummy = new LHMEntry<K, V>(null, null)
 
 
     /** Saves the given value under the given key. */
@@ -20,13 +20,18 @@ public class LinkedHashMap<K, V> extends HashMap<K, V>
         super.put(key, value)
 
 
+    /** Get the number of mappings in this LinkedHashMap. */
+    function size() returns int
+        return keys.getSize()
+
+
     /** Removes the value saved under the given key. */
     override function remove(K key)
         super.remove(key)
         keys. remove(key)
 
 
-    /** Clears the HashMap of all entries */
+    /** Clears the LinkedHashMap of all entries */
     override function flush()
         super.flush()
         if not keys == null
@@ -106,7 +111,7 @@ class TestClass
     let six = map.get(5)
     six.assertEquals(6)
 
-    destroy map
+    // destroy map
 
 
 @test function checkCanIterate()
