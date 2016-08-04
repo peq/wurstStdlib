@@ -80,7 +80,7 @@ public class Knockback3
     per second. `groundAngle` and `airAngle` are the direction and trajectory
     parameters, respectively. Example:
 
-        import Knocback3
+        import Knockback3
         ...
         unit u = ...
         Knockback3.add(u, 1000., angle(0.), angle(bj_PI / 4.))
