@@ -194,3 +194,32 @@ class TestClass
     iter2.close()
 
     sum.assertEquals(20)
+
+
+@test function canHandleDestroyedElements()
+    let map = new LinkedHashMap<TestClass, TestClass>()
+
+    let tc1 = new TestClass(1)
+    let tc2 = new TestClass(2)
+    let tc3 = new TestClass(3)
+    let tc4 = new TestClass(4)
+
+    map.put(tc1, tc2)
+    map.put(tc3, tc4)
+
+    var sum = 0
+    for x in map
+        sum += x.key.val
+        sum += x.value.val
+
+    sum.assertEquals(10)
+
+    destroy tc1
+
+    sum = 0
+    for x in map
+        sum += x.key.val
+        sum += x.value.val
+
+    sum.assertEquals(7)
+
