@@ -167,12 +167,6 @@ public class LLIterator<Q>
 		current = current.next
 		return current.elem
 
-
-	function prev() returns Q
-		current = current.prev
-		return current.elem
-
-
 	function close()
 		destroy this
 
