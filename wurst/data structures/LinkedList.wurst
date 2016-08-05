@@ -1,9 +1,10 @@
 package LinkedList
 import NoWurst
+import Wurstunit
 
 public class LinkedList<T>
 	private LLEntry<T> dummy
-	private int size = 0
+	protected int size = 0
 
 	/** create a new, empty list */
 	construct()
@@ -67,7 +68,7 @@ public class LinkedList<T>
 
 	/** get an iterator for this list */
 	function iterator() returns LLIterator<T>
-		return new LLIterator(dummy)
+		return new LLIterator(this, dummy)
 
 	/** get an iterator for this list */
 	function backiterator() returns LLBIterator<T>
@@ -139,16 +140,19 @@ class LLEntry<S>
 		this.next = next
 
 public class LLIterator<Q>
-	LLEntry<Q> dummy
-	LLEntry<Q> current
+	LLEntry<Q>    dummy
+	LLEntry<Q>    current
+	LinkedList<Q> parent
 
-	construct(LLEntry<Q> dummy)
-		this.dummy = dummy
+	construct(LinkedList<Q> parent, LLEntry<Q> dummy)
+		this.parent  = parent
+		this.dummy   = dummy
 		this.current = dummy
 
 	/** remove the current element from the list */
 	function remove()
 		if current != dummy
+			parent.size--
 			current.next.prev = current.prev
 			current.prev.next = current.next
 			let removedNode   = current
@@ -191,3 +195,24 @@ public interface LinkedListPredicate<T>
 
 public interface LinkedListUpdater<T>
 	function update(T t) returns T
+
+
+@test function checkSizeWorks()
+	let ll = new LinkedList<int>()..add(1)..add(2)..add(3)
+
+	ll.getSize().assertEquals(3)
+
+	let iter = ll.iterator()
+	for x from iter
+		if x % 2 == 1
+			iter.remove()
+	iter.close()
+
+	var ctr = 100
+	let iter2 = ll.iterator()
+	for _ from iter2
+		ctr++
+
+	ctr.assertEquals(101)
+
+	ll.getSize().assertEquals(1)
