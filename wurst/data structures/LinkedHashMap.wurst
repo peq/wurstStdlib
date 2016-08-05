@@ -152,6 +152,23 @@ class TestClass
     //destroy map2
 
 
+@test function canNestedIterate()
+    let map = new LinkedHashMap<int, int>()
+
+    map..put(1, 2)..put(2, 3)..put(3, 4)..put(4, 5)..put(5, 6)
+
+    var outerSum = 0
+    for kv in map
+        outerSum += kv.key
+
+        var innerSum = 0
+        for innerKv in map
+            innerSum += innerKv.key
+
+        innerSum.assertEquals(15)
+    outerSum.assertEquals(15)
+
+
 @test function canIterateSameMapTwice()
     let map = new LinkedHashMap<int, int>()
 
