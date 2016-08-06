@@ -1,9 +1,5 @@
 package MultiFx
 import DummyRecycler
-import Effect
-import Colors
-import Vectors
-import Angle
 import LinkedList
 /********************************************************
  * * * * * * * * * * MultiFx * * * * * * * * * * * * * * * * *

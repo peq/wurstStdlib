@@ -1,9 +1,5 @@
 package Fx
 import DummyRecycler
-import Effect
-import Colors
-import Vectors
-import Angle
 import Terrain
 
 /********************************************************

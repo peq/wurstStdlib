@@ -85,9 +85,6 @@
 // *************************************************************
 
 package CustomBar
-import Colors
-import Vectors
-import Texttag
 
 
 // TTBar
@@ -185,7 +182,6 @@ public class CustomBar
 
 
 	function setValue( real val )
-		int chars = 0
 		var newval = val
 		// keep newval inside possible boundaries
 		if newval > 100.
@@ -195,7 +191,7 @@ public class CustomBar
 
 		value = newval / 100. // the new value
 		txt = fg_color.toColorString()
-		chars = (R2I((value * NUM_CHARS * char.length())+0.5) div char.length())*char.length() // calculate the number of chars needed to display the new value
+		int chars = (R2I((value * NUM_CHARS * char.length())+0.5) div char.length())*char.length() // calculate the number of chars needed to display the new value
 		txt += ptext.substring( 0, chars)
 
 
