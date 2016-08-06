@@ -1,8 +1,6 @@
 package HeroPreset
 import UnitObjEditing
 import LinkedList
-import ObjectIdGenerator
-import ObjectIds
 
 class StringWrap
 	string s

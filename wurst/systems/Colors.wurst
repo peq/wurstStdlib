@@ -33,10 +33,7 @@ public function color.lerp(color target, real smoothness) returns color
 	return color(this.red.lerp(target.red, smoothness),this.green.lerp(target.green, smoothness),this.blue.lerp(target.blue, smoothness))
 
 public function makeColor(int colo) returns colorA
-	int a = 0
-	int r = 0
-	int g = 0
-	int b = 0
+	int a
 	int col = colo
 	if col < 0
 		col=-(-col+0x80000000)
@@ -46,10 +43,10 @@ public function makeColor(int colo) returns colorA
 		a = col div 0x1000000
 		col = col-a*0x1000000
 
-	r=col div 0x10000
+	let r=col div 0x10000
 	col=col-r*0x10000
-	g=col div 0x100
-	b=col-g*0x100
+	let g=col div 0x100
+	let b=col-g*0x100
 
 	return colorA(r,g,b,a)
 

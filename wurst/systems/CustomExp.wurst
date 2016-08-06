@@ -1,6 +1,4 @@
 package CustomExp
-import TempGroups
-import Texttag
 
 //Configuration globals
 /** Radius to consider heroes for exp gain */
@@ -67,7 +65,7 @@ function filter() returns boolean
 
 
 /** Use this filter to modify the exp given for certain conditions. */
-function expFilter (int exp, unit u ) returns int
+function expFilter (int exp, unit _u ) returns int
 	return exp
 
 /** This applies the XP accordingly. */
@@ -79,7 +77,6 @@ function giveXP()
 	player killerPlayer = killer.getOwner()
 	int add = 0
 	int killedUnitLevel
-	int unitNum = 0
 	real kx = killer.getX()
 	real ky = killer.getY()
 
@@ -87,7 +84,7 @@ function giveXP()
 
 	GroupEnumUnitsInRange(ENUM_GROUP, kx, ky, RADIUS, Condition(function filter))
 	ForGroup(ENUM_GROUP, function CountUnitsInGroupEnum)
-	unitNum = bj_groupCountUnits
+	int unitNum = bj_groupCountUnits
 
 	//============================================================
 	if IsUnitAlly(deadUnit, killerPlayer) == false
@@ -109,19 +106,19 @@ function giveXP()
 		add = expFilter(add, deadUnit)
 		for f in ENUM_GROUP
 			let distance = distanceBetweenCoords(dx, dy, kx, ky)
-	      	//Far Away Units
+			//Far Away Units
 			if distance > MEDIUM*MEDIUM and distance <= FAR*FAR
 				SetPlayerHandicapXP(GetOwningPlayer(f), 1.00)
 				add = R2I(add * FAR_FACTOR)
 				AddHeroXP(f, add, true)
 				SetPlayerHandicapXP(GetOwningPlayer(f), 0.00)
-	      //Medium Distance Units
+			//Medium Distance Units
 			else if distance > CLOSE*CLOSE and distance <= MEDIUM*MEDIUM
 				SetPlayerHandicapXP(GetOwningPlayer(f), 1.00)
 				add = R2I(add * MEDIUM_FACTOR)
 				AddHeroXP(f, add, true)
 				SetPlayerHandicapXP(GetOwningPlayer(f), 0.00)
-	      //Close Range Units
+			//Close Range Units
 			else if distance <= CLOSE*CLOSE
 				SetPlayerHandicapXP(GetOwningPlayer(f), 1.00)
 				add = R2I(add * CLOSE_FACTOR)

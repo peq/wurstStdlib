@@ -483,7 +483,6 @@ function damageAOE_Enum() returns boolean
 	real hp = 0.
 
 	if( not IsUnitInRangeXY(target, dmg.aoeX, dmg.aoeY, dmg.aoeRadius) )
-		target=null
 		return false
 
 	f = dmg.getTargetFactorCore(dmg.sourceAOE, target, false)
@@ -498,7 +497,6 @@ function damageAOE_Enum() returns boolean
 
 
 	Damager.instc= dmg //better restore, nesting IS possible!
-	target=null
 	return false
 
 
@@ -509,7 +507,6 @@ function damageAOE_DestructablesEnum() returns boolean
 	real	 dy=dmg.aoeY-GetDestructableY(target)
 
 	if( dx*dx + dy*dy >= dmg.aoeRadius+EPSILON )
-		target=null
 		return false
 
 	dmg.countAOE++
@@ -519,7 +516,6 @@ function damageAOE_DestructablesEnum() returns boolean
 	UnitDamageTarget(dmg.sourceAOE,target, dmg.aoeDamage, true, dmg.ranged, dmg.atype, dmg.dtype, dmg.wtype )
 
 	Damager.instc= dmg //better restore, nesting IS possible!
-	target=null
 	return false
 
 init

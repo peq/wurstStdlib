@@ -36,7 +36,7 @@ public abstract class Collider
 	private unit homingTargetUnit = null
 	private vec2 homingTarget
 
-	construct( vec2 pos, angle dir, string fxPath )
+	construct( vec2 pos, angle dir, string _fxPath )
 		fx = new Fx( pos, dir )
 		startTimedLoop()
 
@@ -122,9 +122,6 @@ public abstract class Collider
 						d += PI2
 
 					fx.setXYAngle(angle(d))
-			else
-				ns = 0
-
 
 
 			ns = speed + acceleration * ANIMATION_PERIOD

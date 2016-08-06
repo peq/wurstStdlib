@@ -1,6 +1,5 @@
 package Terrain
 import NoWurst
-import Vectors
 import Item
 
 constant real		MAX_RANGE	 	= 10.

@@ -1,5 +1,4 @@
 package OnCast
-import Trigger
 import public Vectors
 
 public module OnPointCast

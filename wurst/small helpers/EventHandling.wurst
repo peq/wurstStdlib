@@ -1,5 +1,4 @@
 package EventHandling
-import Trigger
 
 trigger castTrig
 trigger evalTrig

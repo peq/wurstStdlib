@@ -1,6 +1,5 @@
 package DummyCaster
 import DummyRecycler
-import ClosureTimers
 // @credit Anitarf
 
 constant boolean FORCE_INVISIBLE_CAST = false

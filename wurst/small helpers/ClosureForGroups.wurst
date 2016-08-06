@@ -1,5 +1,4 @@
 package ClosureForGroups
-import TempGroups
 
 public interface ForGroupCallback
 	function callback(unit u)
