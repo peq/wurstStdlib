@@ -1,96 +1,172 @@
 package LinkedHashMap
 import HashMap
-import LinkedList
 import Wurstunit
 
-public class LinkedHashMap<K, V> extends HashMap<K, V>
-    private LinkedList<K>  keys
-    private LHMEntry<K, V> dummy
+public class LinkedHashMap<K, V>
+    protected constant dummy       = new LHMEntry<K, V>(null, null)
+    private   constant keysEntries = new HashMap<K, LHMEntry<K, V>>()
+    private   var      tail        = dummy
+    private   var      size        = 0
 
-    construct()
-        keys  = new LinkedList<K>()
-        dummy = new LHMEntry<K, V>(null, null)
+
+    private function addEntry(LHMEntry<K, V> e)
+        if tail == dummy
+            dummy.next = e
+            tail = e
+            tail.prev = dummy
+            tail.next = dummy
+        else
+            tail.next = e
+            e.prev = tail
+            e.next = dummy
+            tail = e
+
+        size++
+
+
+    /**
+    @returns the last member, removed from the list, on success; or null if
+    empty.
+    */
+    private function popList() returns LHMEntry<K, V>
+        LHMEntry<K, V> ret = null
+        if not tail == dummy
+            ret = tail
+            tail.prev.next = dummy
+
+        return ret
 
 
     /** Saves the given value under the given key. */
-    override function put(K key, V value)
-        if not has(key)
-            keys.add(key)
+    function put(K key, V value)
+        if keysEntries.has(key)
+            let entry = keysEntries.get(key)
+            entry.value = value
+        else
+            let entry = new LHMEntry<K, V>(key, value)
+            addEntry(entry)
+            keysEntries.put(key, entry)
 
-        super.put(key, value)
+
+    function get(K key) returns V
+        return keysEntries.get(key).value
+
+
+    function has(K key) returns bool
+        return keysEntries.has(key)
 
 
     /** Get the number of mappings in this LinkedHashMap. */
     function size() returns int
-        return keys.getSize()
+        return size
 
 
-    /** Removes the value saved under the given key. */
-    override function remove(K key)
-        super.remove(key)
-        keys. remove(key)
+    /**
+    Removes the value saved under the given key.
+
+    @returns true on success, and false if there was no such key.
+    */
+    function remove(K key) returns bool
+        var success = false
+
+        if keysEntries.has(key)
+            success = true
+            let entry = keysEntries.get(key)
+            keysEntries.remove(key)
+            destroy entry
+
+        return success
 
 
-    /** Clears the LinkedHashMap of all entries */
-    override function flush()
-        super.flush()
-        if not keys == null
-            destroy keys
-            keys = new LinkedList<K>()
+    /** Clears the LinkedHashMap of all entries. */
+    function flush()
+        keysEntries.flush()
+        while not tail == dummy
+            let p = popList()
+            if not p == null
+                destroy p
 
 
     /** Gets an iterator for this LinkedHashMap. */
     function iterator() returns LHMIterator<K, V>
-        return new LHMIterator(this, keys)
+        return new LHMIterator(this, dummy)
+
+
+    function removeWhen(LinkedHashMapPredicate<K, V> predicate)
+        let iter = iterator()
+        while iter.hasNext()
+            let kv = iter.next()
+
+            if predicate.isTrueFor(kv)
+                destroy kv
+        destroy predicate
 
 
     ondestroy
-        destroy keys
+        destroy keysEntries
         destroy dummy
 
 
 public class LHMEntry<K, V>
+
     K key
     V value
+
+    thistype prev = null
+    thistype next = null
 
     construct(K key, V value)
         this.key   = key
         this.value = value
 
+    ondestroy
+        this.prev.next = this.next
+        this.next.prev = this.prev
+
 
 public class LHMIterator<K, V>
-    LHMEntry<K, V>      dummy
-    LinkedList<K>       keys
-    LLIterator<K>       keysIterator
-    LinkedHashMap<K, V> parentMap
+    private LHMEntry<K, V>      dummy
+    private LHMEntry<K, V>      current
+    private LinkedHashMap<K, V> parentMap
 
-    construct(LinkedHashMap<K, V> parentMap, LinkedList<K> keys)
-        this.dummy        = new LHMEntry<K, V>(null, null)
-        this.keys         = keys
-        this.keysIterator = keys.iterator()
-        this.parentMap    = parentMap
+    construct(LinkedHashMap<K, V> parentMap, LHMEntry<K, V> dummy)
+        this.dummy     = dummy
+        this.current   = dummy
+        this.parentMap = parentMap
 
 
-    /** Remove the current element from the LinkedHashMap. */
-    function remove()
-        if not dummy.key == null
-            parentMap.remove(dummy.key)
-            keysIterator.remove()
+    /**
+    Remove the current element from the LinkedHashMap.
+    @returns true on success, or false if the map is empty.
+    */
+    function remove() returns bool
+        var ret = false
+        if not current == dummy
+            ret = true
+            parentMap.remove(current.key)
+
+            let toDestroy = current
+            current = current.prev
+            destroy toDestroy
+
+        return ret
 
 
     function hasNext() returns bool
-        return keysIterator.hasNext()
+        return not current.next == dummy
 
 
     function next() returns LHMEntry<K, V>
-        dummy.key   = keysIterator.next()
-        dummy.value = parentMap.get(dummy.key)
-        return dummy
+        current = current.next
+        return current
 
 
     function close()
-        keysIterator.close()
         destroy this
+
+
+public interface LinkedHashMapPredicate<K, V>
+    function isTrueFor(LHMEntry<K, V> kv) returns bool
 
 
 class TestClass
@@ -129,7 +205,6 @@ class TestClass
     let iter = map.iterator()
     while iter.hasNext()
         let entry = iter.next()
-
         sum += entry.key  .val
         sum += entry.value.val
     iter.close()
@@ -214,7 +289,9 @@ class TestClass
 
     sum.assertEquals(10)
 
-    destroy tc1
+    tc1.val = -1
+
+    map.removeWhen((LHMEntry<TestClass, TestClass> kv) -> kv.key.val == -1 or kv.value.val == -1)
 
     sum = 0
     for x in map
@@ -223,3 +300,4 @@ class TestClass
 
     sum.assertEquals(7)
 
+    // destroy map
