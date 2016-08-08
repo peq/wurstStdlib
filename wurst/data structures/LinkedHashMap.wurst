@@ -31,8 +31,9 @@ public class LinkedHashMap<K, V>
     private function popList() returns LHMEntry<K, V>
         LHMEntry<K, V> ret = null
         if not tail == dummy
-            ret = tail
-            tail.prev.next = dummy
+            ret  = tail
+            tail = tail.prev
+            tail.next = dummy
 
         return ret
 
@@ -72,10 +73,14 @@ public class LinkedHashMap<K, V>
         if keysEntries.has(key)
             success = true
             let entry = keysEntries.get(key)
-            keysEntries.remove(key)
-            destroy entry
+            remove(entry)
 
         return success
+
+
+    protected function remove(LHMEntry<K, V> e)
+        keysEntries.remove(e.key)
+        destroy e
 
 
     /** Clears the LinkedHashMap of all entries. */
@@ -103,6 +108,7 @@ public class LinkedHashMap<K, V>
 
 
     ondestroy
+        flush()
         destroy keysEntries
         destroy dummy
 
@@ -143,11 +149,7 @@ public class LHMIterator<K, V>
         var ret = false
         if not current == dummy
             ret = true
-            parentMap.remove(current.key)
-
-            let toDestroy = current
-            current = current.prev
-            destroy toDestroy
+            parentMap.remove(current)
 
         return ret
 
