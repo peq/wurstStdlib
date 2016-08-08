@@ -6,6 +6,10 @@ import Terrain
 
 native UnitAlive(unit id) returns boolean
 
+/** Returns the current order of the unit */
+public function unit.getCurrentOrder() returns int
+	return GetUnitCurrentOrder(this)
+
 public function unit.setInvulnerable(boolean flag)
 	SetUnitInvulnerable(this, flag)
 
