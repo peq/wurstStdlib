@@ -158,7 +158,7 @@ public class Knockback3
             if knockback.del.z <= isAirborneThreshold
                 knockback.del *= (1. - frictionCoefficientGround)
 
-                if velXySquared > frictionFxThreshold*ANIMATION_PERIOD
+                if velXySquared > frictionFxThreshold*frictionFxThreshold*ANIMATION_PERIOD
                     addEffect(frictionFxPath, pos3).destr()
 
             if USE_MOVE_SPEED_MODIFIERS
