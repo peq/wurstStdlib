@@ -3,9 +3,9 @@ import HashMap
 import Wurstunit
 
 public class LinkedHashMap<K, V>
-    protected constant dummy       = new LHMEntry<K, V>(null, null)
+    protected constant dummy       = new LHMEntry<K, V>(null, null, null)
     private   constant keysEntries = new HashMap<K, LHMEntry<K, V>>()
-    private   var      tail        = dummy
+    protected var      tail        = dummy
     private   var      size        = 0
 
 
@@ -13,29 +13,17 @@ public class LinkedHashMap<K, V>
         if tail == dummy
             dummy.next = e
             tail = e
-            tail.prev = dummy
-            tail.next = dummy
+            tail.prev  = dummy
+            tail.next  = dummy
         else
             tail.next = e
             e.prev = tail
             e.next = dummy
             tail = e
 
+        dummy.prev = tail
+
         size++
-
-
-    /**
-    @returns the last member, removed from the list, on success; or null if
-    empty.
-    */
-    private function popList() returns LHMEntry<K, V>
-        LHMEntry<K, V> ret = null
-        if not tail == dummy
-            ret  = tail
-            tail = tail.prev
-            tail.next = dummy
-
-        return ret
 
 
     /** Saves the given value under the given key. */
@@ -44,7 +32,7 @@ public class LinkedHashMap<K, V>
             let entry = keysEntries.get(key)
             entry.value = value
         else
-            let entry = new LHMEntry<K, V>(key, value)
+            let entry = new LHMEntry<K, V>(this, key, value)
             addEntry(entry)
             keysEntries.put(key, entry)
 
@@ -72,8 +60,7 @@ public class LinkedHashMap<K, V>
 
         if keysEntries.has(key)
             success = true
-            let entry = keysEntries.get(key)
-            remove(entry)
+            remove(keysEntries.get(key))
 
         return success
 
@@ -81,15 +68,13 @@ public class LinkedHashMap<K, V>
     protected function remove(LHMEntry<K, V> e)
         keysEntries.remove(e.key)
         destroy e
+        size--
 
 
     /** Clears the LinkedHashMap of all entries. */
     function flush()
         keysEntries.flush()
-        while not tail == dummy
-            let p = popList()
-            if not p == null
-                destroy p
+        removeWhen((LHMEntry<K, V> kv) -> true)
 
 
     /** Gets an iterator for this LinkedHashMap. */
@@ -103,8 +88,20 @@ public class LinkedHashMap<K, V>
             let kv = iter.next()
 
             if predicate.isTrueFor(kv)
-                destroy kv
+                iter.remove()
+        iter.close()
         destroy predicate
+
+
+    function forEach(LinkedHashMapCallback<K, V> callback)
+        let iter = iterator()
+        while iter.hasNext()
+            let kv = iter.next()
+
+            callback.run(kv)
+        iter.close()
+
+        destroy callback
 
 
     ondestroy
@@ -115,17 +112,22 @@ public class LinkedHashMap<K, V>
 
 public class LHMEntry<K, V>
 
+    LinkedHashMap<K, V> parent
     K key
     V value
 
     thistype prev = null
     thistype next = null
 
-    construct(K key, V value)
-        this.key   = key
-        this.value = value
+    construct(LinkedHashMap<K, V> parent, K key, V value)
+        this.parent = parent
+        this.key    = key
+        this.value  = value
 
     ondestroy
+        if this.parent.tail == this
+            this.parent.tail = this.parent.tail.prev
+
         this.prev.next = this.next
         this.next.prev = this.prev
 
@@ -141,17 +143,12 @@ public class LHMIterator<K, V>
         this.parentMap = parentMap
 
 
-    /**
-    Remove the current element from the LinkedHashMap.
-    @returns true on success, or false if the map is empty.
-    */
-    function remove() returns bool
-        var ret = false
-        if not current == dummy
-            ret = true
-            parentMap.remove(current)
+    /** Remove the current element from the LinkedHashMap. */
+    function remove()
+        if current == dummy
+            error("Tried to delete dummy from LinkedHashMap iterator.")
 
-        return ret
+        parentMap.remove(current)
 
 
     function hasNext() returns bool
@@ -169,6 +166,10 @@ public class LHMIterator<K, V>
 
 public interface LinkedHashMapPredicate<K, V>
     function isTrueFor(LHMEntry<K, V> kv) returns bool
+
+
+public interface LinkedHashMapCallback<K, V>
+    function run(LHMEntry<K, V> kv)
 
 
 class TestClass
@@ -189,7 +190,7 @@ class TestClass
     let six = map.get(5)
     six.assertEquals(6)
 
-    // destroy map
+    destroy map
 
 
 @test function checkCanIterate()
@@ -212,7 +213,7 @@ class TestClass
     iter.close()
 
     sum.assertEquals(10)
-    // destroy map
+    destroy map
 
 
 @test function canHaveMultipleMaps()
@@ -225,8 +226,8 @@ class TestClass
     map. get(1).assertEquals(2)
     map2.get(3).assertEquals(4)
 
-    //destroy map
-    //destroy map2
+    destroy map
+    destroy map2
 
 
 @test function canNestedIterate()
@@ -302,4 +303,35 @@ class TestClass
 
     sum.assertEquals(7)
 
-    // destroy map
+    destroy map
+
+@test function canBecomeEmptyThenIterateAgainLater()
+    let map = new LinkedHashMap<int, int>()
+
+    map..put(1, 1)..put(2, 2)..put(3, 3)..put(4, 4)
+
+    map.removeWhen((LHMEntry<int, int> kv) -> kv.key < 3)
+
+    map.size().assertEquals(2)
+
+    map.remove(4)
+
+    map.size().assertEquals(1)
+
+    let iter = map.iterator()
+    for kv from iter
+        kv.value.assertEquals(3)
+        iter.remove()
+    iter.close()
+
+    map.size().assertEquals(0)
+
+    map..put(1, 2)..put(2, 3)..put(3, 4)
+
+    var vals = 0
+    let braap = map.iterator()
+    for kv from braap
+        vals += kv.value
+    braap.close()
+
+    vals.assertEquals(9)
