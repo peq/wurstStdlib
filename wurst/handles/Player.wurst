@@ -96,9 +96,12 @@ public function player.unselect(unit u)
 	if GetLocalPlayer() == this
 		SelectUnit(u, false)
 
-public function player.panCamToTimed(unit u, real time)
+public function player.panCamToTimed(vec2 target, real time)
 	if GetLocalPlayer() == this
-		PanCameraToTimed(u.getX(), u.getY(), time)
+		PanCameraToTimed(target.x, target.y, time)
+
+public function player.panCamToTimed(unit u, real time)
+	this.panCamToTimed(u.getPos(), time)
 
 public function player.setAbilityAvailable(integer abilityId, boolean avail)
 	SetPlayerAbilityAvailable(this, abilityId, avail)
