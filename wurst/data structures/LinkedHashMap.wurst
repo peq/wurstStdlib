@@ -117,12 +117,12 @@ public class LinkedHashMap<K, V>
 
 public class LHMEntry<K, V>
 
-    constant LinkedHashMap<K, V> parent
+    private constant LinkedHashMap<K, V> parent
     constant K key
     V value
 
-    thistype prev = null
-    thistype next = null
+    protected thistype prev = null
+    protected thistype next = null
 
     construct(LinkedHashMap<K, V> parent, K key, V value)
         this.parent = parent
