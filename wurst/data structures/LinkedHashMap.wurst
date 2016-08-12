@@ -9,6 +9,11 @@ public class LinkedHashMap<K, V>
     private   var      size        = 0
 
 
+    construct()
+        dummy.next = dummy
+        dummy.prev = dummy
+
+
     private function addEntry(LHMEntry<K, V> e)
         if tail == dummy
             dummy.next = e
@@ -335,3 +340,16 @@ class TestClass
     braap.close()
 
     vals.assertEquals(9)
+
+
+@test function iterateEmptyMap()
+    let m = new LinkedHashMap<int, int>()
+
+    for _ in m
+        testFail("Nothing should be iterated here.")
+
+    // Test when there are two LHM's, each with its own dummy.
+    let n = new LinkedHashMap<int, int>()
+
+    for _ in n
+        testFail("Nothing should be iterated here.")
