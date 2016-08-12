@@ -117,8 +117,8 @@ public class LinkedHashMap<K, V>
 
 public class LHMEntry<K, V>
 
-    LinkedHashMap<K, V> parent
-    K key
+    constant LinkedHashMap<K, V> parent
+    constant K key
     V value
 
     thistype prev = null
