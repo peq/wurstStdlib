@@ -6,26 +6,34 @@ import Trigger
 import Player
 import TempGroups
 import AbilityObjEditing
-import ClosureTimers
 import RegisterEvents
 
-constant eventTrigger = CreateTrigger()
+interface UnitEventListener
+	function run()
+
+UnitEventListener array enterListener
+integer enterListeners = 0
+
+UnitEventListener array leaveListener
+integer leaveListeners = 0
+public function onEnter(UnitEventListener l)
+	enterListener[enterListeners] = l
+	enterListeners++
+
+public function onLeave(UnitEventListener l)
+	leaveListener[leaveListeners] = l
+	leaveListeners++
+
+unit tempUnit = null
 
 public function getEnterLeaveUnit() returns unit
 	return tempUnit
 
-public function onEnter(code c)
-	eventTrigger.addCondition(Condition(c))
-
-public function onLeave(code c)
-	eventTrigger.addAction(c)
-
-unit tempUnit = null
-
 init
 	CreateTrigger()..registerEnterRegion(boundRegion, Filter(() -> begin
 		tempUnit = GetFilterUnit()..addAbility(ABILITY_ID)..makeAbilityPermanent(ABILITY_ID, true)
-		eventTrigger.evaluate()
+		for int i = 0 to enterListeners-1
+			enterListener[i].run()
 		tempUnit = null
 	end))
 
@@ -33,18 +41,20 @@ init
 		let leavingUnit = GetTriggerUnit()
 		if leavingUnit.getAbilityLevel(ABILITY_ID) == 0
 			tempUnit = leavingUnit
-			eventTrigger.execute()
+			for int i = 0 to leaveListeners-1
+				leaveListener[i].run()
 			tempUnit = null
 	end)
 	ABILITY_ID = '!e@$'
 	for i = 0 to bj_MAX_PLAYER_SLOTS-1
 		players[i].setAbilityAvailable(ABILITY_ID, false)
 
-	nullTimer(() -> GroupEnumUnitsInRect(ENUM_GROUP, boundRect, Filter(() -> begin
+	GroupEnumUnitsInRect(ENUM_GROUP, boundRect, Filter(() -> begin
 		tempUnit = GetFilterUnit()..addAbility(ABILITY_ID)..makeAbilityPermanent(ABILITY_ID, true)
-		eventTrigger.evaluate()
+		for int i = 0 to enterListeners-1
+			enterListener[i].run()
 		tempUnit = null
-	end)))
+	end))
 
 int ABILITY_ID = '!e@$'
 
