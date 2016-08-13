@@ -95,6 +95,7 @@ public class Knockback3
             knockback.del += v
         else
             knockback     = new Knockback3()
+            unitNodes.put(u, knockback)
             knockback.u   = u
             knockback.del = v
             if size == 1
