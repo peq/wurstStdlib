@@ -6,7 +6,6 @@ import Trigger
 import Player
 import TempGroups
 import AbilityObjEditing
-import ClosureTimers
 import RegisterEvents
 
 constant eventTrigger = CreateTrigger()
@@ -23,9 +22,8 @@ public function onLeave(code c)
 unit tempUnit = null
 
 init
-	CreateTrigger()..registerEnterRegion(boundRegion, null)
-	..addCondition(Condition(() -> begin
-		tempUnit = GetEnteringUnit()..addAbility(ABILITY_ID)..makeAbilityPermanent(ABILITY_ID, true)
+	CreateTrigger()..registerEnterRegion(boundRegion, Filter(() -> begin
+		tempUnit = GetFilterUnit()..addAbility(ABILITY_ID)..makeAbilityPermanent(ABILITY_ID, true)
 		eventTrigger.evaluate()
 		tempUnit = null
 	end))
@@ -41,11 +39,11 @@ init
 	for i = 0 to bj_MAX_PLAYER_SLOTS-1
 		players[i].setAbilityAvailable(ABILITY_ID, false)
 
-	nullTimer(() -> GroupEnumUnitsInRect(ENUM_GROUP, boundRect, Filter(() -> begin
+	GroupEnumUnitsInRect(ENUM_GROUP, boundRect, Filter(() -> begin
 		tempUnit = GetFilterUnit()..addAbility(ABILITY_ID)..makeAbilityPermanent(ABILITY_ID, true)
 		eventTrigger.evaluate()
 		tempUnit = null
-	end)))
+	end))
 
 int ABILITY_ID = '!e@$'
 
