@@ -3235,7 +3235,7 @@ public class Other
 	static constant treeoflife_portrait = "buildings\\nightelf\\treeoflife\\treeoflife_portrait.mdx"
 	static constant treeoflifeupgradetargetart = "abilities\\spells\\nightelf\\treeoflifeupgrade\\treeoflifeupgradetargetart.mdx"
 	static constant treeoflifeupgradetargetarthand = "abilities\\spells\\nightelf\\treeoflifeupgrade\\treeoflifeupgradetargetarthand.mdx"
-	static constant trollbeserkertarget = "abilities\\spells\\orc\\trollberserk\\trollbeserkertarget.mdx"
+	static constant trollberserkertarget = "abilities\\spells\\orc\\trollberserk\\trollbeserkertarget.mdx"
 	static constant trough0 = "doodads\\lordaeronsummer\\props\\trough\\trough0.mdx"
 	static constant trough1 = "doodads\\lordaeronsummer\\props\\trough\\trough1.mdx"
 	static constant trueshotaura = "abilities\\spells\\nightelf\\trueshotaura\\trueshotaura.mdx"

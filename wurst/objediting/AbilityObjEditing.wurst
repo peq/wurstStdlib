@@ -4724,7 +4724,7 @@ public class AbilityDefinitionIntelligenceBonusPlus6 extends AbilityDefinition
 
 
 
-public class AbilityDefinitionBeserk extends AbilityDefinition
+public class AbilityDefinitionBerserk extends AbilityDefinition
 	construct(int newAbilityId)
 		super(newAbilityId, 'Absk')
 
