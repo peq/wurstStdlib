@@ -5,6 +5,7 @@ import public Boolexpr
 import public Camera
 import public Destructable
 import public Effect
+import public Fogmodifier
 import public Force
 import public Group
 import public Hashtable
