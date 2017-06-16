@@ -78,3 +78,6 @@ public class ChannelAbilityPreset extends AbilityDefinitionIllidanChannel
 
 	function hasOption(Option option) returns boolean
 		return optionSet.contains(option castTo int)
+
+	function presetBaseOrderIDs(string order)
+		presetBaseOrderID((int lvl) -> order)
