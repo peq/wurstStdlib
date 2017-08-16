@@ -18,3 +18,6 @@ public function timer.start(real time, code timerCallBack)
 
 public function timer.startPeriodic(real time, code timerCallBack)
 	TimerStart(this, time, true, timerCallBack)
+
+public function timer.destr()
+	DestroyTimer(this)
