@@ -1,3 +1,4 @@
 .project
 wurst.dependencies
 .vscode/
+_build/
